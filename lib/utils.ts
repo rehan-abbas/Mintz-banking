@@ -1,4 +1,4 @@
-/* eslint-disable no-prototype-builtins */
+  /* eslint-disable no-prototype-builtins */
 import { type ClassValue, clsx } from "clsx";
 import qs from "query-string";
 import { twMerge } from "tailwind-merge";
@@ -197,15 +197,18 @@ export const getTransactionStatus = (date: Date) => {
 
 export const authFormSchema = (type: string) =>
   z.object({
-    firstName: type === "sign-up" ? z.string().optional() : z.string().min(3),
-    lastName: type === "sign-up" ? z.string().optional() : z.string().min(3),
-    address: type === "sign-up" ? z.string().optional() : z.string().max(50),
-    state:
-      type === "sign-up" ? z.string().optional() : z.string().max(2).min(2),
-    postalcode:
-      type === "sign-up" ? z.string().optional() : z.string().min(3).max(6),
-    DOB: type === "sign-up" ? z.string().optional() : z.string().min(3),
-    ssn: type === "sign-up" ? z.string().optional() : z.string().min(3),
+    // Only include firstName and lastName for sign-up
+    ...(type === "sign-up" && {
+      firstName: z.string().min(3),
+      lastName: z.string().min(3),
+      address: z.string().max(50),
+      state: z.string().max(2).min(2),
+      city: z.string().max(50),
+      postalcode: z.string().min(3).max(6),
+      DOB: z.string().min(3),
+      ssn: z.string().min(3),
+    }),
+    // These fields are required for both sign-in and sign-up
     email: z.string().email(),
     password: z.string().min(8),
   });
