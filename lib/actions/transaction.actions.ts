@@ -34,28 +34,37 @@ export const getTransactionsByBankId = async ({bankId}: getTransactionsByBankIdP
   try {
     const { database } = await createAdminClient();
 
-    const senderTransactions = await database.listDocuments(
-      DATABASE_ID!,
-      TRANSACTION_COLLECTION_ID!,
-      [Query.equal('senderBankId', bankId)],
-    )
-
-    const receiverTransactions = await database.listDocuments(
-      DATABASE_ID!,
-      TRANSACTION_COLLECTION_ID!,
-      [Query.equal('receiverBankId', bankId)],
-    );
-
-    const transactions = {
-      total: senderTransactions.total + receiverTransactions.total,
-      documents: [
-        ...senderTransactions.documents, 
-        ...receiverTransactions.documents,
-      ]
+    if (!DATABASE_ID || !TRANSACTION_COLLECTION_ID) {
+      console.error("Missing required environment variables");
+      return { documents: [] };
     }
 
-    return parseStringify(transactions);
+    try {
+      const senderTransactions = await database.listDocuments(
+        DATABASE_ID,
+        TRANSACTION_COLLECTION_ID,
+        [Query.equal('senderBankId', bankId)]
+      );
+
+      const receiverTransactions = await database.listDocuments(
+        DATABASE_ID,
+        TRANSACTION_COLLECTION_ID,
+        [Query.equal('receiverBankId', bankId)]
+      );
+
+      return {
+        total: (senderTransactions?.total || 0) + (receiverTransactions?.total || 0),
+        documents: [
+          ...(senderTransactions?.documents || []), 
+          ...(receiverTransactions?.documents || [])
+        ]
+      };
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      return { documents: [] };
+    }
   } catch (error) {
-    console.log(error);
+    console.error("Error in getTransactionsByBankId:", error);
+    return { documents: [] };
   }
 }

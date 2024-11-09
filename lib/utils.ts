@@ -133,26 +133,30 @@ export function getAccountTypeColors(type: AccountTypes) {
 export function countTransactionCategories(
   transactions: Transaction[]
 ): CategoryCount[] {
+  if (!transactions || !Array.isArray(transactions)) {
+    return [];
+  }
+
   const categoryCounts: { [category: string]: number } = {};
   let totalCount = 0;
 
-  // Iterate over each transaction
-  transactions &&
-    transactions.forEach((transaction) => {
-      // Extract the category from the transaction
-      const category = transaction.category;
+  transactions.forEach((transaction) => {
+    if (!transaction) return;
+    
+    // Extract the category from the transaction, use default if undefined
+    const category = transaction.category || "Uncategorized";
 
-      // If the category exists in the categoryCounts object, increment its count
-      if (categoryCounts.hasOwnProperty(category)) {
-        categoryCounts[category]++;
-      } else {
-        // Otherwise, initialize the count to 1
-        categoryCounts[category] = 1;
-      }
+    // If the category exists in the categoryCounts object, increment its count
+    if (categoryCounts.hasOwnProperty(category)) {
+      categoryCounts[category]++;
+    } else {
+      // Otherwise, initialize the count to 1
+      categoryCounts[category] = 1;
+    }
 
-      // Increment total count
-      totalCount++;
-    });
+    // Increment total count
+    totalCount++;
+  });
 
   // Convert the categoryCounts object to an array of objects
   const aggregatedCategories: CategoryCount[] = Object.keys(categoryCounts).map(
