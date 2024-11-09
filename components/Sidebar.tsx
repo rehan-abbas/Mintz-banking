@@ -7,8 +7,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Footer from './Footer'
 import PlaidLink from './PlaidLink'
-// import Footer from './Footer'
-// import PlaidLink from './PlaidLink'
 
 const Sidebar = ({ user }: SidebarProps) => {
   const pathname = usePathname();

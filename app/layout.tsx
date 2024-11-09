@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, IBM_Plex_Serif } from "next/font/google";
 import "./globals.css";
+import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -36,6 +37,18 @@ export default function RootLayout({
         className={`${inter.variable} ${ibmPlexSerif.variable} antialiased`}
       >
         {children}
+        <Toaster 
+          position="top-center"
+          reverseOrder={false}
+          toastOptions={{
+            // Default options for all toasts
+            duration: 5000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+          }}
+        />
       </body>
     </html>
   );
